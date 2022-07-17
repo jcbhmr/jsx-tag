@@ -5,7 +5,7 @@
 <div align="center">
 
 <!-- Screenshot of https://carbon.now.sh/bPbkZ5hkCK7ZXlzgXOsI -->
-![Example code image](https://user-images.githubusercontent.com/61068799/179427177-82940f9d-4521-45d7-9e8b-4f9089f6c69e.png)
+![Example code image](https://i.imgur.com/6ib57xt.png)
 
 </div>
 <br />
