@@ -1,15 +1,21 @@
+/**
+ * @param createElement
+ * @param id
+ * @param inserts
+ */
+{{
+    if (true) {
+        var createElement = console.log
+        var id = crypto.getRandomValues(new Uint32Array(1))[0]
+        var inserts = ["attr", "text"]
+        peg$parse(`<p data-test=PLACEHOLDER[${id}][0]>PLACEHOLDER[${id}][1]</p>`)
+    }
+}}
+
 __Start
     = $:Element
     { return $ }
 
-/**
- * This entire grammar gets wrapped in a function that gets re-called each time the user calls
- * the 'jsx()' function. Each time, it passes the 'inserts' array (the '${var}' inserts) and the
- * current UUID of the execution. Why a UUID per-execution? So that you never get the "oh I had
- * the text 'PLACEHOLDER[4]' in my string that got passed in, and now things are breaking?"
- *
- * The props are wrapped in an object so that the names don't collide
- */
 Insert
     = "PLACEHOLDER" "[" id2:Int "]" "[" i:Int "]"
     & { return id2 === id }
@@ -17,19 +23,15 @@ Insert
 
 Element
     = VoidElement / ContentElement
-
 VoidElement
     = "<" Tag:TagName _ props:Attrs "/>"
     { return createElement(Tag, props) }
-
 ContentElement
     = "<" Tag:TagName _ props:Attrs ">" children:Child* "</" Close:TagName ">"
     &{ return Tag === Close }
     { return createElement(Tag, props, ...children) }
-
 TagName
-    = tag:(Insert / TAG_NAME) __
-    { return tag }
+    = Insert / TAG_NAME
 
 Child
     = Element / Insert / Text
@@ -41,9 +43,6 @@ Text
  * - It does NOT check that there is a prepending mandatory whitespace character (see 'element.pegjs')
  * - It DOES match a zero-length attribute list
  * - It DOES eat optional whitespace on both ends
- *
- * We don't return an AST of stuff to deal with at a higher level, instead, we return a closure so that all
- * the attribute application logic is RIGHT HERE and not in the 'element.pegjs' file.
  */
 Attrs
     = __ (rest:(attr:Attr ___ { return attr }))* spread:Insert __
