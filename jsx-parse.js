@@ -2,9 +2,9 @@ export { parseWrapper as default, SyntaxError }
 
 let { createElement, id, inserts } = {}
 function parseWrapper(input, vars) {
-	{ createElement, id, inserts } = vars
+	;({ createElement, id, inserts } = vars)
 	const result = parse(input)
-	{ createElement, id inserts } = {}
+	;({ createElement, id, inserts } = {})
 	return result
 }
 
