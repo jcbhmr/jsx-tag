@@ -58,6 +58,17 @@ ValueAttr
 AttrValue
     = Insert / QuotedString
 
+QuotedString
+    = DoubleQuotedString / SingleQuotedString
+DoubleQuotedString
+    = '"' (!'"' .)* '"'
+SingleQuotedString
+    = "'" (!"'" .)* "'"
+Int
+    = text:$("0" / ([1-9] [0-9]*))
+    &{ return Number.isSafeInteger(Number(text)) }
+    { return Number(text) }
+
 // This MUST NEVER swallow the "/", otherwise 'VoidElement' won't work!
 ATTR_NAME = $[a-zA-Z0-9_\-]+
 
