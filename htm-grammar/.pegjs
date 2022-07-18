@@ -3,14 +3,12 @@
  * @param id
  * @param inserts
  */
-{{
-    if (true) {
-        var createElement = Array.of
-        var id = 45
-        var inserts = ["attr", "text"]
-        // <p data-test=PLACEHOLDER[45][0]>PLACEHOLDER[45][1]</p>
-    }
-}}
+// {{
+//     const createElement = Array.of
+//     const id = 45
+//     const inserts = ["attr", "text"]
+//     // <p data-test=PLACEHOLDER[45][0]>PLACEHOLDER[45][1]</p>
+// }}
 
 __Start
     = $:Element
