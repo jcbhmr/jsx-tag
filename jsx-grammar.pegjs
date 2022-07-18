@@ -15,7 +15,7 @@
 //     </p>*/
 // }}
 
-__Start
+START
     = __ $:Element __
     { return $ }
 
