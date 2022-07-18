@@ -1,17 +1,22 @@
 /**
+ * This module NEEDS to be wrapped in a function that provides the annotated parameters
  * @param createElement
  * @param id
  * @param inserts
  */
 // {{
+//     // https://peggyjs.org/online.html
 //     const createElement = Array.of
 //     const id = 45
 //     const inserts = ["attr", "text"]
-//     // <p data-test=PLACEHOLDER[45][0]>PLACEHOLDER[45][1]</p>
+//     /*<p data-test=PLACEHOLDER[45][0]>
+//       PLACEHOLDER[45][1]
+//       <span>Hello</span>
+//     </p>*/
 // }}
 
 __Start
-    = $:Element
+    = __ $:Element __
     { return $ }
 
 Insert
@@ -22,19 +27,20 @@ Insert
 Element
     = VoidElement / ContentElement
 VoidElement
-    = "<" Tag:TagName _ props:Attrs "/>"
+    = "<" Tag:TagName props:(_ props:Attrs { return props })? "/>"
     { return createElement(Tag, props) }
 ContentElement
-    = "<" Tag:TagName _ props:Attrs ">" children:Child* "</" Close:TagName ">"
+    = "<" Tag:TagName props:(_ props:Attrs { return props })? ">" children:Child* "</" Close:TagName ">"
     &{ return Tag === Close }
     { return createElement(Tag, props, ...children) }
 TagName
     = Insert / TAG_NAME
 
 Child
-    = Element / Insert / Text
-Text
-    = $(!"<" .)+
+    = Element / Insert / ChildText
+ChildText
+	// Stop on end of parent, or beginning of other child
+    = $(!(("</" Close:TagName ">") / Element / Insert) .)+
 
 /**
  * This matches an attribute list. That's it.
