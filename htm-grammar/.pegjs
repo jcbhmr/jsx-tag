@@ -5,10 +5,10 @@
  */
 {{
     if (true) {
-        var createElement = console.log
-        var id = crypto.getRandomValues(new Uint32Array(1))[0]
+        var createElement = Array.of
+        var id = 45
         var inserts = ["attr", "text"]
-        peg$parse(`<p data-test=PLACEHOLDER[${id}][0]>PLACEHOLDER[${id}][1]</p>`)
+        // <p data-test=PLACEHOLDER[45][0]>PLACEHOLDER[45][1]</p>
     }
 }}
 
@@ -36,7 +36,7 @@ TagName
 Child
     = Element / Insert / Text
 Text
-    = $.+
+    = $(!"<" .)+
 
 /**
  * This matches an attribute list. That's it.
@@ -45,7 +45,7 @@ Text
  * - It DOES eat optional whitespace on both ends
  */
 Attrs
-    = __ (rest:(attr:Attr ___ { return attr }))* spread:Insert __
+    = __ rest:(attr:Attr ___ { return attr })* last:Attr? spread:Insert? __
     { return Object.assign({}, ...rest, last, spread) }
 
 Attr
@@ -71,6 +71,7 @@ Int
 
 // This MUST NEVER swallow the "/", otherwise 'VoidElement' won't work!
 ATTR_NAME = $[a-zA-Z0-9_\-]+
+TAG_NAME = $[a-zA-Z0-9_\-]+
 
 // Single
 _ = $[ \t\r\n]
