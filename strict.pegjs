@@ -36,11 +36,12 @@ START
 
 Insert
     // 'key' matches the default format generation of 'StringRegistry'
-    = "PLACEHOLDER" "[" key:$[a-z0-9]+ /* {8} */ "]"
+    = "PLACEHOLDER" "[" key:KEY "]"
     // Skip if not actually a valid one. User might be trying to guess one?
     &{ return inserts.has(key) }
     // Return as a raw value. Can be checked or wrapped at the rule level, not here.
     { return inserts.get(key) }
+KEY = $([a-z0-9] [a-z0-9] [a-z0-9] [a-z0-9] [a-z0-9] [a-z0-9] [a-z0-9] [a-z0-9] /* 8x */)
 
 Element
     = VoidElement / (CustomElement / BuiltinElement)
@@ -61,7 +62,7 @@ BuiltinElement
 Child
     = NWS? @(Insert / Element / ChildText) NWS?
 NWS = $(_* (NL _*)+)
-// This is effectively the inverse of wherever this appears. It MUST include any potential termination
+// This is effectively the inverse of wherever 'ChildText' appears. It MUST include any potential termination
 // matcher since PEG grammars don't have non-greedy operators like '.*?' in regex.
 CHILD_TEXT_STOP
     = $(NWS / ("</" (Insert / TAG_NAME) _* ">") / (NWS? (Insert / Element) NWS?))
