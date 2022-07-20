@@ -1,19 +1,6 @@
-/**
- * This module NEEDS to be wrapped in a function that provides the annotated parameters
- * @param createElement
- * @param id
- * @param inserts
- */
-// {{
-//     // https://peggyjs.org/online.html
-//     const createElement = Array.of
-//     const id = 45
-//     const inserts = ["attr", "text"]
-//     /*<p data-test=PLACEHOLDER[45][0]>
-//       PLACEHOLDER[45][1]
-//       <span>Hello</span>
-//     </p>*/
-// }}
+{
+    const { createElement, id, inserts } = options
+}
 
 START
     = __ $:Element __
@@ -27,10 +14,10 @@ Insert
 Element
     = VoidElement / ContentElement
 VoidElement
-    = "<" Tag:TagName props:(_ props:Attrs { return props })? "/>"
+    = "<" Tag:TagName props:(_ @Attrs)? __ "/>"
     { return createElement(Tag, props) }
 ContentElement
-    = "<" Tag:TagName props:(_ props:Attrs { return props })? ">" children:Child* "</" Close:TagName ">"
+    = "<" Tag:TagName props:(_ @Attrs)? ">" children:Child* "</" Close:TagName __ ">"
     &{ return Tag === Close }
     { return createElement(Tag, props, ...children) }
 TagName
@@ -40,16 +27,16 @@ Child
     = Element / Insert / ChildText
 ChildText
 	// Stop on end of parent, or beginning of other child
-    = $(!(("</" Close:TagName ">") / Element / Insert) .)+
+    = $(!(("</" Close:TagName __ ">") / Element / Insert) .)+
 
 /**
  * This matches an attribute list. That's it.
- * - It does NOT check that there is a prepending mandatory whitespace character (see 'element.pegjs')
+ * - It does NOT check that there is a prepending mandatory whitespace character
  * - It DOES match a zero-length attribute list
  * - It DOES eat optional whitespace on both ends
  */
 Attrs
-    = __ rest:(attr:Attr ___ { return attr })* last:Attr? spread:Insert? __
+    = __ rest:(@Attr ___)* last:Attr? spread:Insert? __
     { return Object.assign({}, ...rest, last, spread) }
 
 Attr
