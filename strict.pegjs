@@ -1,5 +1,33 @@
+{{
+    import StringRegistry from "./string-registry.js" // Not in TS-world anymore
+    // Need 'Array.isTemplateObject()' to determine string trust (only construct trusted JSX)
+    // Ref: https://github.com/tc39/proposal-array-is-template-object#an-example
+    import "npm:core-js/proposals/array-is-template-object"
+}}
+
 {
-    const { createElement, id, inserts } = options
+    // Input is originally the args of whatever was passed (NON-string-ified). In this case, that is a tagged template arg package
+    const [strings, ...inserts] = input
+    // Input MUST be from a trusted template string!
+    if (!Array.isTemplateObject(strings)) {
+        throw new TypeError("Expected template object")
+    }
+
+    // This holds the ID keys that will be used for 'PLACEHOLDER[${id}]' strings in parsing
+    const ids = new StringRegistry()
+    // Convert inserts into ID strings that are like pointers to the 'StringRegistry'-hidden value
+    const placeholders = inserts.map((insert) => ids.for(insert))
+    // Interleave the two arrays. The 'placeholders' array is 1 element shorter than 'strings' since it is "between" each string pair
+    const monostring = strings.flatMap((string, i) => i < placeholders.length ? [string, placeholders[i]] : [string]).join("")
+    
+    // Reset the input to this "safe string" to parse
+    input = monostring
+
+    // Extract some vital properties that must be in-scope for construction of the resulting object
+    const { createElement } = options
+
+    // This should be an auto-coercion in PEGgy.js, but it's not
+    input = String(input)
 }
 
 START
