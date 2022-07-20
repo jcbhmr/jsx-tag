@@ -36,7 +36,7 @@ START
 
 Insert
     // 'key' matches the default format generation of 'StringRegistry'
-    = "PLACEHOLDER" "[" key:$[a-z0-9]+ "]"
+    = "PLACEHOLDER" "[" key:$[a-z0-9]+ /* {8} */ "]"
     // Skip if not actually a valid one. User might be trying to guess one?
     &{ return inserts.has(key) }
     // Return as a raw value. Can be checked or wrapped at the rule level, not here.
